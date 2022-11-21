@@ -1,6 +1,10 @@
 const express = require('express')
 const cors = require('cors')
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database('./db');
 const app = express()
+
+
 
 app.use(cors())
 
@@ -16,7 +20,7 @@ app.get('/add-new-user',(req,res)=>{
     password = req.query.password
     //update instead
     db.run(`INSERT INTO users (name, password) values (?, ?)`, [user, password])
-    db.all("SELECT * from users ORDER BY wins DESC", (err, row)=>{
+    db.all("SELECT * from users", (err, row)=>{
             console.log(row)
         })
     res.end()
