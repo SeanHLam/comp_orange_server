@@ -28,9 +28,6 @@ app.get('/add-new-user',(req,res)=>{
     userPassword = req.query.password
     //update instead
     db.run(`INSERT INTO users (name, password) values (?, ?)`, [userName, userPassword])
-    db.all("SELECT * from users ORDER BY wins DESC", (err, row)=>{
-            console.log(row)
-        })
     res.end()
 })
 
