@@ -23,12 +23,23 @@ app.get('/',(req,res)=>{
     });
 })
 
+//check DB if user already exists
+app.get('/check-user-login', (req, res)=>{
+    userName = req.query.name
+    userPassword = req.query.password
+    db.each("SELECT name, password FROM users", (err,row) => {
+        console.log(row);
+    });
+})
+
+// add a new user to the DB
 app.get('/add-new-user',(req,res)=>{
     userName = req.query.name
     userPassword = req.query.password
     //update instead
     db.run(`INSERT INTO users (name, password) values (?, ?)`, [userName, userPassword])
-    res.end()
+    //res.end()
+    res.json({message:"New user created."})
 })
 
 app.listen(3001)
