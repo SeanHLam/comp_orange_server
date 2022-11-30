@@ -27,8 +27,15 @@ app.get('/',(req,res)=>{
 app.get('/check-user-login', (req, res)=>{
     userName = req.query.name
     userPassword = req.query.password
-    db.each("SELECT name, password FROM users", (err,row) => {
-        console.log(row);
+    db.all("SELECT name, password FROM users WHERE name=?",[userName], (err,data) => {
+        const foundUser = data[0]
+
+        if(foundUser.password == userPassword){
+            console.log("found user")
+        }else{
+            console.log("access denied")
+        }
+        res.end()
     });
 })
 
@@ -37,8 +44,8 @@ app.get('/add-new-user',(req,res)=>{
     userName = req.query.name
     userPassword = req.query.password
     //update instead
-    db.run(`INSERT INTO users (name, password) values (?, ?)`, [userName, userPassword])
-    //res.end()
+    db.run(`INSERT INTO users (name, password) values (?, ?)`, 
+        [userName, userPassword])
     res.json({message:"New user created."})
 })
 
