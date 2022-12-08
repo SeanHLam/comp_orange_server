@@ -109,7 +109,7 @@ app.get('/add-post',(req,res)=>{
 })
 
 app.get('/posts', (req, res)=>{
-    db.all("SELECT * FROM posts", [], (err,rows) => {
+    db.all("SELECT * FROM posts ORDER BY id DESC", [], (err,rows) => {
        return res.json({data:rows});
     });
 })
@@ -119,12 +119,16 @@ app.get('/posts', (req, res)=>{
 //Adds tweet to report list
 app.get('/send-report', (req, res)=>{
     sentReport = req.query.report
-    
-    db.each("SELECT report FROM reports", (err,row) => {
-        return res.json(row);
-    });
-    console.log(sentReport)
-    //res.end()
+    id= req.query.postid
+    //inserts the report info and the id from what post it came from
+    db.run(`INSERT INTO reports (report, post_id) values (?, ?)` , [sentReport, id] )
+   
+    //logs all of the existing reports
+    db.all("SELECT * FROM reports", [], (err,rows) => {
+        console.log(rows)
+     });
+   
+    res.end()
 })
 
 
