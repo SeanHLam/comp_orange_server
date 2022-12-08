@@ -16,6 +16,7 @@ app.use(cors());
 var userName = "";
 var userPassword = "";
 
+
 db.run('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar(15) UNIQUE, password varchar(255))')
 db.run('CREATE TABLE IF NOT EXISTS posts(id INTEGER PRIMARY KEY AUTOINCREMENT, post varchar(255), name varchar(255), date varchar(255), user_id INTEGER NOT NULL, FOREIGN KEY(user_id) REFERENCES users(id))')
 db.run('CREATE TABLE IF NOT EXISTS follows(id INTEGER PRIMARY KEY AUTOINCREMENT, following_id INTEGER, followed_id INTEGER, FOREIGN KEY(following_id) REFERENCES users(id) FOREIGN KEY(followed_id) REFERENCES users(id));')
@@ -33,15 +34,14 @@ app.get('/',(req,res)=>{
 app.get('/check-user-login', (req, res)=>{
     userName = req.query.name
     userPassword = req.query.password
-    
- 
-    db.each("SELECT * from users", (err,row) => {
-        // if (userName === row.name && userPassword === row.password){
-        //     console.log(row.id)
-        //     res.json({row})
-        // }
 
-    });
+    // db.each("SELECT * from users", (err,row) => {
+    //     // if (userName === row.name && userPassword === row.password){
+    //     //     console.log(row.id)
+    //     //     res.json({row})
+    //     // }
+
+    // });
 
     db.all("SELECT * from users", (err,row) => {
       res.json({row})
@@ -62,17 +62,20 @@ app.get('/check-user-login', (req, res)=>{
 // add a new user to the DB
 
 app.get('/add-new-user',(req,res)=>{
+    
     userName = req.query.name
     userPassword = req.query.password
+
     //update instead
-    db.run(`INSERT OR IGNORE INTO users (name, password) values (?, ?)`, [userName, userPassword])
-    //res.end()
+   
+    db.run(`INSERT OR IGNORE INTO users (name,password) values (?, ?)` , [userName, userPassword] )
+    // db.each("SELECT * from users", (err,row) => {
+    //     console.log(row)
+    // });
+    console.log(userName, userPassword)
+    res.end()
 
-    db.each("SELECT * from users", (err,row) => {
-        console.log(row)
-    });
-
-    res.json({message:"New user created."})
+    // res.json({message:"New user created."})
 })
 
 
@@ -88,24 +91,25 @@ app.get('/add-post',(req,res)=>{
     console.log(req.query)
     const post = req.query.post
     const date = req.query.date
-
-    db.run(`INSERT INTO posts (post, date, user_id) values (?, ?, ?)`, [post, date, 1])
+    const userName = req.query.user
+    const userHandle = req.query.handle
+    const userId = req.query.id
+    db.run(`INSERT INTO posts (post, date, user_id, handle, name) values (?, ?, ?, ?, ?)`, [post, date, userId, userHandle, userName])
    
-
     db.each("SELECT * from posts", (err,row) => {
         console.log(row)
     });
 
-    db.all("SELECT * FROM posts", [], (err,rows) => {
-        return res.json({data:rows});
-     });
+    // db.all("SELECT * FROM posts", [], (err,rows) => {
+    //     return res.json({data:rows});
+    //  });
     
-    // res.end()
+    res.end()
    
 })
 
 app.get('/posts', (req, res)=>{
-    db.all("SELECT * FROM posts", [], (err,rows) => {
+    db.all("SELECT * FROM posts ORDER BY id DESC", [], (err,rows) => {
        return res.json({data:rows});
     });
 })
@@ -115,12 +119,16 @@ app.get('/posts', (req, res)=>{
 //Adds tweet to report list
 app.get('/send-report', (req, res)=>{
     sentReport = req.query.report
-    
-    db.each("SELECT report FROM reports", (err,row) => {
-        return res.json(row);
-    });
-    console.log(sentReport)
-    //res.end()
+    id= req.query.postid
+    //inserts the report info and the id from what post it came from
+    db.run(`INSERT INTO reports (report, post_id) values (?, ?)` , [sentReport, id] )
+   
+    //logs all of the existing reports
+    db.all("SELECT * FROM reports", [], (err,rows) => {
+        console.log(rows)
+     });
+   
+    res.end()
 })
 
 //follow 
