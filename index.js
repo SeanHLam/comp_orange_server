@@ -18,8 +18,8 @@ var userPassword = "";
 
 db.run('CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar(15) UNIQUE, password varchar(255))')
 db.run('CREATE TABLE IF NOT EXISTS posts(id INTEGER PRIMARY KEY AUTOINCREMENT, post varchar(255), name varchar(255), date varchar(255), user_id INTEGER NOT NULL, FOREIGN KEY(user_id) REFERENCES users(id))')
-db.run('CREATE TABLE IF NOT EXISTS follows(id INTEGER PRIMARY KEY AUTOINCREMENT, name varchar(15) UNIQUE, password varchar(255))')
-db.run('CREATE TABLE IF NOT EXISTS reports(id INTEGER PRIMARY KEY AUTOINCREMENT, report varchar(255), post_id INTEGER NOT NULL, FOREIGN KEY(post_id) REFERENCES posts(id))')
+db.run('CREATE TABLE IF NOT EXISTS follows(id INTEGER PRIMARY KEY AUTOINCREMENT, following_id INTEGER, followed_id INTEGER, FOREIGN KEY(following_id) REFERENCES users(id) FOREIGN KEY(followed_id) REFERENCES users(id));')
+db.run('CREATE TABLE IF NOT EXISTS reports(id INTEGER PRIMARY KEY AUTOINCREMENT, report varchar(255), post_id INTEGER NOT NULL, FOREIGN KEY (post_id) REFERENCES posts(id))')
 
 app.get('/',(req,res)=>{
     console.log("server running");
@@ -121,6 +121,12 @@ app.get('/send-report', (req, res)=>{
     });
     console.log(sentReport)
     //res.end()
+})
+
+//follow 
+app.get('/relationship', (req, res)=>{
+    const follow = req.query.follow
+    db.run(`INSERT INTO follows (following_id, followed_id) values (?, ?)`, [])
 })
 
 
