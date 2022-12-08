@@ -79,11 +79,6 @@ app.get('/add-new-user',(req,res)=>{
 })
 
 
-// // add new post to the DB
-// app.post('/add-post',(req, res)=>{
-//     req.body.text
-// })
-
 app.get('/add-post',(req,res)=>{
 
 // db.run('CREATE TABLE IF NOT EXISTS posts(id INTEGER PRIMARY KEY AUTOINCREMENT, post varchar(255), date varchar(255), user_id INTEGER NOT NULL, FOREIGN KEY(user_id) REFERENCES users(id))')
@@ -100,13 +95,26 @@ app.get('/add-post',(req,res)=>{
         console.log(row)
     });
 
-    // db.all("SELECT * FROM posts", [], (err,rows) => {
-    //     return res.json({data:rows});
-    //  });
-    
     res.end()
    
 })
+
+app.get('/delete-post',(req,res)=>{
+    
+    const postid = req.query.id
+    // console.log(postid)
+
+    db.run(`DELETE FROM posts WHERE id = ${postid}`)
+    
+    db.each("SELECT * from posts", (err,row) => {
+        console.log(row)
+    });
+
+    res.end()
+       
+})
+    
+
 
 app.get('/posts', (req, res)=>{
     db.all("SELECT * FROM posts ORDER BY id DESC", [], (err,rows) => {
