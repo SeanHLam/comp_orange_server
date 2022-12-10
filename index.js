@@ -93,7 +93,16 @@ app.get('/add-post',(req,res)=>{
    
 })
 
+
+app.get('/edit-post',(req,res)=> {
+    
+    db.run(`INSERT INTO posts(post)`,[post])
+    
+})
+
+
 //gets the postid from frontend and deleted the post located at the id 
+
 app.get('/delete-post',(req,res)=>{
     
     const postid = req.query.id
