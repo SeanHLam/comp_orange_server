@@ -99,6 +99,12 @@ app.get('/add-post',(req,res)=>{
    
 })
 
+app.get('/edit-post',(req,res)=> {
+    
+    db.run(`INSERT INTO posts(post)`,[post])
+    
+})
+
 app.get('/delete-post',(req,res)=>{
     
     const postid = req.query.id
