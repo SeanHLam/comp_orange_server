@@ -95,9 +95,14 @@ app.get('/add-post',(req,res)=>{
 
 
 app.get('/edit-post',(req,res)=> {
+    postId = req.query.id
+    newText = req.query.text
+
+    console.log(postId, newText)
+    db.run(`UPDATE posts SET post = (?) WHERE id = ${postId}`, [newText])
     
-    db.run(`INSERT INTO posts(post)`,[post])
-    
+    //db.run(`DELETE FROM posts WHERE id = ${postid}`)
+
 })
 
 
